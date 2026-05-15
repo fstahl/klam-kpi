@@ -1,0 +1,19 @@
+{
+  "name": "powerd-board-kpi",
+  "version": "1.0.0",
+  "description": "Monthly board KPI report for POWER&D AB, generated from ATL scorecard + Spiris time data via an Excel template.",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "present": "sh present.sh",
+    "pull": "python3 pull_data.py",
+    "test": "python3 tests/test_pull_data.py"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "xlsx": "^0.18.5"
+  }
+}
