@@ -1,256 +1,264 @@
-# POWER&D Board KPI Report
+# Kläm KPI
 
-A single-page board report that summarises POWER&D AB's monthly performance:
-new business, revenue, EBITA, P/WC, billing rate, GP per employee, admin cost,
-and consultant conversions — each card showing actuals against an annual
-target with a 12-month sparkline.
+An on-premise KPI dashboard for small companies — distributed as a native desktop app (Electron). Fill your spreadsheet, open the app, present.
 
-The report is generated monthly from two source files:
-
-| Source                   | What it gives us                                  |
-| ------------------------ | ------------------------------------------------- |
-| `ATL_MB*.xlsx`           | Mercur Business Control monthly scorecard export  |
-| `Spiris+Tid_*.xlsx`      | Spiris consultant billing rate export             |
-
-Both files contain sensitive financial data and are gitignored.
-
-The full data pipeline:
-
-```
-  ATL_MB*.xlsx ──┐
-                 │   pull_data.py        kpi-template.xlsx       Express + React
-  Spiris*.xlsx ──┼─►  (one-shot script) ─► (Input + KPIs sheets) ─► /board-kpi/
-                 │
-  Input sheet  ──┘   ▲
-  (manual edits)     │
-                     └─ targets, billing rate, conversions, etc.
-```
-
-The Express server reads `kpi-template.xlsx` on every request, so the page
-reflects whatever was last written by `pull_data.py` (or hand-edited in the
-Input sheet).
+Originally built as an internal board report for POWER&D AB; now being generalised into a standalone product.
 
 ---
 
-## 1. Quick start
+## Overview
+
+```
+  kpi-template.xlsx ──────────────────► Express (server.js)
+  (you own this — fill it however       │  /api/board-kpi
+   you like: manually, Power Query,     │  /api/config
+   your own script, …)                  ▼
+                                React app (Vite build → dist/)
+                                        │
+                                Electron window
+```
+
+The Electron app wraps the Express server and React dashboard in a single desktop window. No browser needed. The server re-reads the workbook on every request — no restart needed after updating the spreadsheet.
+
+---
+
+## Quick start
 
 ```bash
-# one-time
-npm install
-
-# run the dashboard
-npm run dev               # node --watch server.js
-```
-
-Open <http://localhost:3000> — `/` redirects to `/board-kpi/`.
-
-To populate the report after a new month closes:
-
-```bash
-# 1. Drop the new ATL_MB and Spiris exports in the project root
-# 2. Open kpi-template.xlsx → Input sheet → fill in this month's manual values
-# 3. Run the pipeline
-npm run pull              # python3 pull_data.py
-# 4. Reload the browser
-```
-
-The smoke test verifies the pipeline end-to-end without touching real data:
-
-```bash
-npm test                  # python3 tests/test_pull_data.py
+npm install          # install Node dependencies
+npm run build        # compile the React frontend (Vite → dist/)
+npm run electron     # build + launch the desktop app
 ```
 
 ---
 
-## 2. Monthly workflow
+## Monthly workflow
 
-1. **Drop in the source files.** ATL Mercur export goes in the project root as
-   `ATL_MB*.xlsx`; Spiris export as `Spiris*.xlsx`. The script picks up
-   whichever it finds — keep just one of each.
-2. **Fill in the Input sheet** of `kpi-template.xlsx`:
-   - **New business** — `cm_count`, `cm_value`, `pe_count`, `pe_value` (per period).
-   - **People** — `converted`, `converted_ytd`.
-   - **Targets** — only need to be set once per fiscal year:
-     `revenue_target_fy`, `ebita_target_fy`, `cm_count_target_fy`,
-     `pe_count_target_fy`, `gp_emp_target`, `admin_target`, `pwc_target`,
-     `billing_target`, `converted_goal`.
-   - **Bases** — `gp_base` and `admin_base` are the monthly per-employee
-     baselines (typically Jan of the current FY); used to compute the index
-     shown on the GP/admin cards.
-3. **Run the pipeline.** `python3 pull_data.py` reads ATL + Spiris + Input,
-   writes everything (actuals, deltas, sparklines, billing history) to
-   `kpi-template.xlsx`.
-4. **Reload the page.** No restart needed — the server reads the workbook
-   on every request.
-
-If you re-run `pull_data.py` later in the same month, BillingHistory dedupes
-by date and resorts, so multiple runs are safe.
+1. Update `kpi-template.xlsx` with the latest figures (manually, or via your own script).
+2. In the app: **Data → Reload Dashboard** (`⌘⇧R`) — the server re-reads the workbook immediately.
+3. **Data → Open Data Folder** (`⌘⇧O`) — opens the app directory in Finder if you need to swap files.
 
 ---
 
-## 3. Architecture
+## Dashboard configuration (`kpi-config.json`)
 
-```
-                                                ┌──────────────────┐
-  python3 pull_data.py ──► kpi-template.xlsx ──►│  Express server  │
-                                                │   (server.js)    │
-                                                └────────┬─────────┘
-                                                         │ /api/board-kpi
-                                                         ▼
-                                                ┌──────────────────┐
-                                                │   React (JSX)    │
-                                                │  /board-kpi/     │
-                                                └──────────────────┘
-```
-
-- **`pull_data.py`** — Python script. Reads the two source workbooks plus the
-  Input sheet, computes all derived KPIs (deltas vs targets, indices,
-  sparklines), and writes the result back into `kpi-template.xlsx`.
-- **`server.js`** — Tiny Express app. Serves the static React page and a
-  single JSON endpoint, `GET /api/board-kpi`, that returns the KPIs sheet
-  reshaped into a per-period payload.
-- **`src/boardKpi.js`** — Reads `kpi-template.xlsx` with the `xlsx` package,
-  applies the percent ×100 transform for display, and shapes the response.
-- **`src/kpi-fields.json`** — Single source of truth for KPI field
-  names and types. Both `pull_data.py` and `boardKpi.js` read it.
-- **`public/board-kpi/`** — React app loaded via Babel-in-the-browser
-  (no build step). Three components live here: [`app.jsx`](public/board-kpi/app.jsx)
-  (sections + tabs), [`components.jsx`](public/board-kpi/components.jsx)
-  (Sparkline, Delta pill, formatters), [`data.js`](public/board-kpi/data.js)
-  (fetch wrapper).
-
----
-
-## 4. The Excel template
-
-`kpi-template.xlsx` has four sheets:
-
-| Sheet              | Purpose                                                    |
-| ------------------ | ---------------------------------------------------------- |
-| `Input`            | Where you (the operator) enter monthly data and targets.   |
-| `KPIs`             | Computed values, written by `pull_data.py`. Read by the API. |
-| `Sparklines`       | 12-month series for each card, written by `pull_data.py`.  |
-| `BillingHistory`   | Rolling 12-month billing-rate log, maintained by the script. |
-
-### Input sheet schema
-
-Each row is `field | description | MTD | QTD | YTD | LASTQ`. Fields are
-identified by the key in column A, not by row position — you can reorder or
-add section headers freely.
-
-Three kinds of fields:
-
-- **Per-period values** (`cm_count`, `pe_count`, `converted`, …) — fill the
-  column for each period as needed.
-- **Single-MTD values** (`pwc_target`, `billing_target`, `gp_base`,
-  `admin_base`, all `*_target_fy`) — write once in the MTD column; the
-  script propagates as needed.
-- **Decimals for percentages** — anything stored as a percent goes in as a
-  decimal (e.g. `0.55` for 55%). The UI applies the ×100 conversion.
-
-### KPI fields config
-
-`src/kpi-fields.json` declares every field exposed to the UI:
+All dashboard layout and branding is stored in `kpi-config.json` in the project root. The file is human-readable and version-controllable; it is also written by the in-app admin mode.
 
 ```json
-"revenue":          { "type": "number" },
-"revenue_delta":    { "type": "percent" },
-"pwc_target":       { "type": "percent" },
+{
+  "branding": {
+    "logoLight": "/assets/logo-primary-colour.png",
+    "logoDark":  "/assets/logo-primary-white.png"
+  },
+  "header": {
+    "title":  "Board KPI Report",
+    "meta":   "Monthly Board Update",
+    "source": "ERP, CRM, HRIS"
+  },
+  "intro": {
+    "tagline":     "{month} at a glance.",
+    "description": "Nine board KPIs across commercial growth, operating efficiency, and people."
+  },
+  "footer": "Confidential · Board materials",
+  "sections": [
+    {
+      "id":    "commercial",
+      "label": "Commercial",
+      "hint":  "New business & financial performance",
+      "cols":  3,
+      "cards": [
+        {
+          "id":           "revenue",
+          "field":        "revenue",
+          "label":        "Revenue",
+          "unit":         "kSEK",
+          "spark":        "rev",
+          "comparison":   "target"
+        }
+      ]
+    }
+  ]
+}
 ```
 
-`type` is one of `string`, `number`, or `percent`. Percent fields are
-stored as decimals in Excel and rendered ×100. To add a new KPI, add
-its row to the `KPIs` sheet, declare it here, then read it from your
-React component as `d.<field_name>`.
+### Card schema
+
+| Property | Type | Description |
+|---|---|---|
+| `field` | string | Field key from `src/kpi-fields.json` |
+| `label` | string | Display label |
+| `unit` | string | Unit suffix (kSEK, %, …) |
+| `tag` | string? | Small badge (e.g. "Consulting") |
+| `spark` | string? | Sparkline key from the API (rev, ebita_pct, bill, gp, adm) |
+| `comparison` | string | `target` · `prev_month` · `prev_year` · `lastq` · `none` |
+| `invert` | bool? | Flip delta colour (lower is better, e.g. costs) |
+| `progress` | bool? | Show progress bar toward target |
+| `target_field` | string? | Field name for the target value |
+| `bar_mode` | string? | `ratio` (value÷target) or `absolute` (value as %) |
+| `type` | string? | `value` (default) or `pair` (two sub-values) |
+| `delta_field` | string? | Override for the pre-computed delta field (default: `{field}_delta`) |
 
 ---
 
-## 5. The pipeline (`pull_data.py`)
+## Admin mode
 
-In order, the script:
+Click the **padlock icon** in the toolbar to enter admin mode. Changes are applied to a draft copy of the config and only saved when you click **Save changes**.
 
-1. Loads `ATL_MB*.xlsx`, `Spiris*.xlsx`, and `kpi-template.xlsx`.
-2. Computes period metadata from `Parameters!C8` (e.g. `"2603"` → March 2026,
-   FY25/26 month 12, Q4) and the corresponding period-target fractions
-   (MTD = 1/12, QTD = months_in_qtd/12, YTD = fy_month/12, LASTQ = 3/12).
-3. Pulls fixed values from the ATL scorecard via `KPI_SOURCE` — a map of
-   `(field, period) → (sheet, cell)`. Each read is type-checked
-   (`atl_number()` raises a clear error if a cell is missing or non-numeric).
-4. Reads manual input from the `Input` sheet.
-5. Computes derived metrics:
-   - GP per employee = ATL gross profit ÷ ATL avg employees
-   - Admin cost per employee = `|ATL overhead|` ÷ employees
-   - Indices = value ÷ (base × months_in_period) × 100 — comparable across tabs
-   - Deltas = actual ÷ period-target − 1, except `pwc_delta` and
-     `billing_delta` which are pp differences
-6. Writes labels and ranges (`Mar 2026`, `Q4 FY25/26`, `Apr 2025 – Mar 2026`).
-7. Builds 12-month sparklines from `LinkM` rows 57–68.
-8. Reads the latest billing rate from Spiris column F, updates
-   `BillingHistory` (overwrite-by-date + sort + cap at 12 rows), and writes
-   the billing sparkline.
-9. Saves `kpi-template.xlsx`.
+In admin mode you can:
+
+- **Replace the logo** — click the logo to open a file picker. Uploads are stored in `data/logos/` and referenced by path.
+- **Edit the top-right text** — title, meta line, and source become inline text fields.
+- **Edit the intro** — the tagline and description become editable. Use `{month}` in the tagline as a placeholder for the current month name.
+- **Edit the footer text**.
+- **Reorder sections** — drag the handle on the left of each section header.
+- **Rename / add / delete sections** — inline rename, trash icon to delete (with confirmation), and **Add section** in the bottom bar.
+- **Set section column count** — 1, 2, 3, or 4 columns per section.
+- **Add cards** — "+ Add card" opens a picker showing all fields from the KPI catalogue not yet on the board.
+- **Edit cards** — pencil icon on each card opens a modal for label, unit, tag, comparison type, sparkline series, progress bar options, and invert.
+- **Reorder cards** — drag handles within each section.
+- **Delete cards** — trash icon.
 
 ---
 
-## 6. Adding or changing a KPI
+## Architecture
 
-1. Add a row to `kpi-template.xlsx` → `KPIs` sheet (column A is the field key).
-2. Declare it in `src/kpi-fields.json` with the right `type`.
-3. If it comes from ATL: add an entry to `KPI_SOURCE` in `pull_data.py`.
-   If it's manual: add to `MANUAL_FIELDS` (per-period) or
-   `SINGLE_VALUE_FIELDS` (one MTD value propagated to all periods).
-   If it's computed: add a block to `pull_data.py`.
-4. Render it in [`public/board-kpi/app.jsx`](public/board-kpi/app.jsx) as
-   `d.<field_name>`.
+### Process layout
 
----
-
-## 7. Testing
-
-```bash
-npm test
+```
+Electron main process (electron/main.js)
+├── imports server.js  →  Express on :3000
+│     ├── GET  /api/board-kpi      reads kpi-template.xlsx
+│     ├── GET  /api/config         reads kpi-config.json
+│     ├── POST /api/config         writes kpi-config.json
+│     ├── GET  /api/kpi-fields     reads src/kpi-fields.json
+│     ├── POST /api/upload-logo    saves to data/logos/
+│     ├── static /dist/            Vite build output
+│     ├── static /public/          fonts (/fonts/), default logos (/assets/)
+│     └── static /data/            user-uploaded logos
+└── BrowserWindow  →  http://localhost:3000
 ```
 
-The smoke test in `tests/test_pull_data.py` builds a synthetic ATL workbook
-and a fresh template in a temp directory, runs `pull_data.py` against them,
-and asserts every field declared in `kpi-fields.json` is populated and key
-values match expectation. It does not touch the real `kpi-template.xlsx`.
+### Frontend
+
+The React app is built with Vite (`src/frontend/` → `dist/`). It fetches `/api/board-kpi`, `/api/config`, and `/api/kpi-fields` on startup and re-renders from config.
+
+Key source files:
+
+| File | Role |
+|---|---|
+| `src/frontend/App.jsx` | Root component; view mode + admin mode state |
+| `src/frontend/components/KPICard.jsx` | Generic config-driven card renderer |
+| `src/frontend/admin/AdminSection.jsx` | DnD section/card management |
+| `src/frontend/admin/CardEditor.jsx` | Card edit modal |
+| `src/frontend/admin/CardPicker.jsx` | Add card modal |
+| `src/frontend/utils/comparison.js` | Delta computation for all comparison types |
+
+### Backend
+
+| File | Role |
+|---|---|
+| `server.js` | Express app — API routes + static serving |
+| `src/boardKpi.js` | Reads `kpi-template.xlsx`, derives field catalogue and KPI data |
+| `src/config.js` | PORT from `.env` (default 3000) |
 
 ---
 
-## 8. Troubleshooting
+## The Excel template
 
-| Symptom                                              | Likely cause                                                                |
-| ---------------------------------------------------- | --------------------------------------------------------------------------- |
-| `RuntimeError: ATL cell R1U!… is empty`              | The ATL scorecard's row layout shifted; update `KPI_SOURCE` in `pull_data.py`. |
-| `ATL_MB*.xlsx` not found                             | Make sure the file is in the project root, not in a subfolder.              |
-| Delta pills show `—`                                 | The corresponding target is empty in the Input sheet.                       |
-| GP/admin index missing                               | `gp_base` or `admin_base` is empty in the Input sheet.                      |
-| Page shows old month                                 | `Parameters!C8` in the ATL file controls the period — verify the export.    |
-| Field value won't render                             | Did you add it to `src/kpi-fields.json`? `pull_data.py` rejects writes to undeclared fields. |
+`kpi-template.xlsx` is the single data source. You own it — fill it however suits your workflow: manually, via Power Query, a Python script, or anything else.
+
+### Required sheets
+
+| Sheet | Purpose |
+|---|---|
+| `KPIs` | One row per metric. Columns: **Field \| Type \| MTD \| QTD \| YTD \| LASTQ** |
+| `Sparklines` | 12-month trailing series. Columns: **Key \| month-1 \| … \| month-12** |
+
+Additional sheets (e.g. `Input`, raw source data) are ignored by the app.
+
+### KPIs sheet format
+
+```
+Field        | Type    | MTD     | QTD     | YTD     | LASTQ
+label        | string  | Apr 2026| Q4      | YTD     | Q3
+range        | string  | Apr '26 | …       | …       | …
+revenue      | number  | 3609    | 11706   | 3609    | 8979
+margin       | percent | 0.105   | 0.118   | 0.105   | 0.112
+```
+
+- **Field** — the key used in `kpi-config.json` card definitions
+- **Type** — `number`, `percent` (stored 0–1, displayed ×100), or `string`
+- **Period columns** — any names; the app exposes MTD / QTD / YTD / LASTQ via the period tabs
+
+### Sparklines sheet format
+
+```
+Key  | Jan  | Feb  | Mar  | … | Dec
+rev  | 3100 | 3400 | 3609 | … | …
+```
+
+The `Key` value maps to the `spark` property of a card in `kpi-config.json`.
 
 ---
 
-## 9. Project layout
+## Adding a KPI
+
+1. Add a row to the `KPIs` sheet: `field_name | number | <values…>`
+2. Add a card in admin mode (padlock icon → **+ Add card**) — the new field appears in the picker automatically.
+3. If the field needs a delta comparison against a target, add a companion `field_name_delta` row of type `percent` with the pre-computed delta value (positive = above target).
+
+---
+
+## Scripts
+
+| Command | What it does |
+|---|---|
+| `npm run build` | Compile React frontend (Vite → `dist/`) |
+| `npm run electron` | Build frontend + launch Electron desktop app |
+| `npm run dev` | Vite HMR on :5173 + Express watch on :3000 (for rapid UI iteration) |
+| `npm start` | Express only (no Vite, no Electron) |
+
+---
+
+## Troubleshooting
+
+| Symptom | Likely cause |
+|---|---|
+| Delta pills show `—` | The `field_delta` row is missing or empty in the KPIs sheet |
+| Field not in card picker | The row is missing from the KPIs sheet, or the workbook hasn't been saved |
+| Page shows stale data | Hit **Data → Reload Dashboard** (`⌘⇧R`) after saving the workbook |
+| Admin changes not saved | Check browser console — server must be running and `kpi-config.json` writable |
+| Electron shows `EADDRINUSE :3000` | A leftover server is holding the port. Run `lsof -ti :3000 \| xargs kill -9` then retry |
+
+---
+
+## Project layout
 
 ```
 .
-├── pull_data.py              # ATL + Spiris + Input → kpi-template.xlsx
-├── kpi-template.xlsx         # Working spreadsheet (Input, KPIs, Sparklines, BillingHistory)
-├── server.js                 # Express server
+├── electron/
+│   └── main.js               # Electron entry point; spawns Express in-process
 ├── src/
-│   ├── boardKpi.js           # Reads kpi-template.xlsx, shapes API response
-│   ├── kpi-fields.json       # Single source of truth for field types
-│   ├── config.js             # PORT
-│   └── utils.js
-├── public/board-kpi/         # React app (no build step — Babel in-browser)
-│   ├── app.jsx
-│   ├── components.jsx
-│   ├── data.js
-│   ├── index.html
-│   ├── styles/
-│   ├── fonts/
-│   └── assets/
-└── tests/
-    └── test_pull_data.py     # End-to-end smoke test
+│   ├── frontend/             # React app source (Vite)
+│   │   ├── index.html
+│   │   ├── main.jsx          # Entry: fetches data + config, mounts App
+│   │   ├── App.jsx           # Root component (view + admin mode)
+│   │   ├── components/       # Sparkline, Delta, KPICard, TopBar, Footer, …
+│   │   ├── admin/            # AdminBar, AdminSection, CardEditor, CardPicker
+│   │   ├── utils/            # formatters.js, comparison.js
+│   │   └── styles/           # tokens.css, dashboard.css, admin.css
+│   ├── boardKpi.js           # Reads kpi-template.xlsx; derives field catalogue + KPI data
+│   └── config.js             # PORT from .env (default 3000)
+├── dist/                     # Vite build output (gitignored)
+├── public/
+│   ├── fonts/                # Red Hat Display TTF files (served at /fonts/)
+│   └── assets/               # Default logos (served at /assets/)
+├── data/
+│   └── logos/                # User-uploaded logos (gitignored)
+├── examples/
+│   └── pull_data_powerd.py   # POWER&D-specific pipeline (reference only)
+├── server.js                 # Express server
+├── vite.config.js            # Vite config (root: src/frontend, out: dist/)
+├── kpi-config.json           # Dashboard layout + branding config
+└── kpi-template.xlsx         # Your data — KPIs sheet + Sparklines sheet
 ```

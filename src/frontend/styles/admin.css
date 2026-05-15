@@ -1,0 +1,144 @@
+/* Admin mode overlay */
+.app--admin .page { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 2px; }
+
+/* Editable inline fields */
+.editable {
+  background: transparent;
+  border: none;
+  border-bottom: 1px dashed var(--accent);
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  padding: 0 2px;
+  min-width: 40px;
+  outline: none;
+  cursor: text;
+}
+.editable:focus { background: var(--accent-soft); border-radius: 3px; border-bottom-color: var(--accent); }
+
+/* Logo replace overlay */
+.topbar__logo-wrap { position: relative; cursor: pointer; }
+.topbar__logo-overlay {
+  position: absolute; inset: -6px; border-radius: 6px;
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  border: 1.5px dashed var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 150ms ease;
+  font-family: var(--font-body); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent);
+}
+.topbar__logo-wrap:hover .topbar__logo-overlay { opacity: 1; }
+
+/* Section admin controls */
+.section--admin .section__head { cursor: grab; }
+.section--admin .section__head:active { cursor: grabbing; }
+.section__admin-controls { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+.admin-icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 6px;
+  background: transparent; border: 1px solid var(--rule);
+  color: var(--fg-mute); cursor: pointer;
+  transition: all 150ms ease; flex-shrink: 0;
+}
+.admin-icon-btn:hover { background: var(--bg-elev); color: var(--fg); border-color: var(--rule-strong); }
+.admin-icon-btn--danger:hover { background: color-mix(in srgb, var(--neg) 10%, transparent); color: var(--neg); border-color: var(--neg); }
+.admin-icon-btn svg { width: 13px; height: 13px; stroke-width: 2; }
+.drag-handle { cursor: grab; color: var(--fg-faint); }
+.drag-handle:active { cursor: grabbing; }
+.drag-handle svg { width: 14px; height: 14px; }
+
+/* Card admin wrapper */
+.kpi--admin { position: relative; outline: 1px dashed var(--rule); }
+.kpi--admin:hover { outline-color: var(--accent); }
+.kpi__admin-controls {
+  position: absolute; top: 8px; right: 8px;
+  display: flex; gap: 4px; z-index: 2;
+}
+.kpi__drag-handle {
+  position: absolute; top: 8px; left: 8px;
+  color: var(--fg-mute); cursor: grab; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px;
+}
+.kpi__drag-handle svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* Add card row */
+.add-card-row {
+  border: 1px dashed var(--rule);
+  background: var(--bg-elev);
+  display: flex; align-items: center; justify-content: center;
+  min-height: 60px; cursor: pointer;
+  color: var(--fg-faint); font-family: var(--font-body);
+  font-size: 13px; gap: 6px; transition: all 150ms ease;
+}
+.add-card-row:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+/* Admin bottom bar */
+.admin-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  background: var(--bg-elev); border-top: 1px solid var(--rule);
+  padding: 12px 32px; display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
+}
+.admin-bar__label {
+  font-family: var(--font-body); font-size: 12px; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg-mute);
+  margin-right: auto;
+}
+.btn--save { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn--save:hover { opacity: 0.9; }
+
+/* Modal overlay */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.modal {
+  background: var(--bg-elev); border: 1px solid var(--rule);
+  border-radius: 12px; padding: 28px; width: 100%; max-width: 480px;
+  max-height: 80vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.modal h3 { font-family: var(--font-display); font-weight: 800; font-size: 18px; margin: 0 0 20px; color: var(--fg); }
+.modal__field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.modal__label { font-family: var(--font-body); font-size: 11px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: var(--fg-mute); }
+.modal__input, .modal__select {
+  background: var(--bg-shell); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 9px 12px;
+  font-family: var(--font-body); font-size: 14px; color: var(--fg);
+  outline: none; transition: border-color 150ms ease; width: 100%;
+}
+.modal__input:focus, .modal__select:focus { border-color: var(--accent); }
+.modal__row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal__check-label { display: flex; align-items: center; gap: 8px; font-family: var(--font-body); font-size: 14px; color: var(--fg); cursor: pointer; }
+.modal__actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--rule); }
+
+/* Card picker grid */
+.card-picker__grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 20px;
+  max-height: 300px; overflow-y: auto;
+}
+.card-picker__item {
+  padding: 12px 14px; border: 1px solid var(--rule); border-radius: 6px;
+  cursor: pointer; background: var(--bg-shell);
+  font-family: var(--font-body); font-size: 13px; color: var(--fg);
+  transition: all 150ms ease;
+}
+.card-picker__item:hover { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.card-picker__item--selected { border-color: var(--accent); background: var(--accent); color: #fff; }
+.card-picker__field { font-size: 10px; opacity: 0.7; margin-top: 2px; }
+
+/* Section name input in header */
+.section__name-input {
+  font-family: var(--font-display); font-weight: 800; font-size: 22px;
+  letter-spacing: -0.01em; color: var(--fg);
+  background: transparent; border: none; border-bottom: 1px dashed var(--accent);
+  outline: none; padding: 0; width: auto; min-width: 60px;
+}
+.section__hint-input {
+  font-family: var(--font-body); font-size: 12px; color: var(--fg-faint);
+  background: transparent; border: none; border-bottom: 1px dashed var(--rule);
+  outline: none; padding: 0; letter-spacing: 0.02em; width: 180px;
+}

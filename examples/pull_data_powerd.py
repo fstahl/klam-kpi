@@ -1,3 +1,18 @@
+# examples/pull_data_powerd.py
+#
+# POWER&D AB — company-specific data pipeline.
+# This script is NOT part of the general Kläm KPI product.
+# It exists as a reference for writing your own pull script.
+#
+# It reads from POWER&D's ERP exports (ATL_MB*.xlsx) and Spiris billing
+# exports, computes KPIs, and writes them to kpi-template.xlsx.
+#
+# To write your own pipeline: read from your data source, compute your KPIs,
+# and write one row per field into the KPIs sheet with columns:
+#   Field | Type | MTD | QTD | YTD | LASTQ
+#
+# Then trigger "Data → Reload Dashboard" in the app (Cmd+Shift+R).
+
 import json
 from pathlib import Path
 from openpyxl import load_workbook

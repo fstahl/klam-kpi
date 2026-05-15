@@ -1,57 +1,60 @@
 import { readFile } from "node:fs/promises";
-import { readFileSync } from "node:fs";
-import { resolve, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
 import { read, utils } from "xlsx";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
 const TEMPLATE_PATH = resolve(process.cwd(), "kpi-template.xlsx");
-const FIELDS_PATH   = resolve(__dirname, "kpi-fields.json");
 
-// Single source of truth for field types — see src/kpi-fields.json
-const fieldsConfig = JSON.parse(readFileSync(FIELDS_PATH, "utf8"));
-const NUMERIC_FIELDS = new Set();
-const PCT_FIELDS     = new Set();
-for (const [name, meta] of Object.entries(fieldsConfig.fields)) {
-  if (meta.type === "number" || meta.type === "percent") NUMERIC_FIELDS.add(name);
-  if (meta.type === "percent") PCT_FIELDS.add(name);
-}
-
-export async function readBoardKpiData() {
+// Parse the workbook and return both KPI data and the field catalogue.
+async function parseWorkbook() {
   const buf = await readFile(TEMPLATE_PATH);
-  const wb = read(buf, { type: "buffer" });
+  const wb  = read(buf, { type: "buffer" });
 
-  // ── Parse KPIs sheet ──────────────────────────────────────────
+  // ── KPIs sheet ────────────────────────────────────────────────────
+  // Expected columns: Field | Type | MTD | QTD | YTD | LASTQ | …
+  //   Field  — key used in kpi-config.json cards
+  //   Type   — "number", "percent" (stored as 0–1, displayed ×100), or "string"
+  //   Periods — one column each; the header row names them (MTD, QTD, YTD, LASTQ, …)
   const kpiSheet = wb.Sheets["KPIs"];
   if (!kpiSheet) throw new Error("Workbook is missing the 'KPIs' sheet");
 
-  // rows[0] = header ["Field","MTD","QTD","YTD","LASTQ"]
-  // defval: null preserves empty cells so the UI can render them as "—"
-  const kpiRows = utils.sheet_to_json(kpiSheet, { header: 1, defval: null });
+  const kpiRows  = utils.sheet_to_json(kpiSheet, { header: 1, defval: null });
   const [headerRow, ...dataRows] = kpiRows;
-  const periods = headerRow.slice(1); // ["MTD","QTD","YTD","LASTQ"]
 
-  const scalars = {};
+  const hasTypeCol  = String(headerRow[1] ?? "").trim().toLowerCase() === "type";
+  const periodStart = hasTypeCol ? 2 : 1;
+  const periods     = headerRow.slice(periodStart).filter(Boolean);
+
+  const scalars   = {};  // field → { period → value }
+  const fieldsMap = {};  // field → { type }
+
   for (const row of dataRows) {
     const field = String(row[0] ?? "").trim();
     if (!field) continue;
-    scalars[field] = {};
-    periods.forEach((p, i) => {
-      const raw = row[i + 1];
+
+    const type = hasTypeCol
+      ? String(row[1] ?? "number").trim().toLowerCase()
+      : "number";
+
+    fieldsMap[field] = { type };
+    scalars[field]   = {};
+
+    periods.forEach((period, i) => {
+      const raw = row[periodStart + i];
       let value;
       if (raw == null || raw === "") {
         value = null;
-      } else if (NUMERIC_FIELDS.has(field)) {
+      } else if (type === "number" || type === "percent") {
         value = Number(raw);
-        if (PCT_FIELDS.has(field)) value = value * 100;
+        if (type === "percent") value = value * 100;
       } else {
         value = String(raw);
       }
-      scalars[field][p] = value;
+      scalars[field][period] = value;
     });
   }
 
-  // ── Parse Sparklines sheet ────────────────────────────────────
+  // ── Sparklines sheet ─────────────────────────────────────────────
+  // Columns: Key | month-1 | month-2 | … | month-12
   const sparkSheet = wb.Sheets["Sparklines"];
   if (!sparkSheet) throw new Error("Workbook is missing the 'Sparklines' sheet");
 
@@ -62,23 +65,34 @@ export async function readBoardKpiData() {
   for (const row of sparkData) {
     const key = String(row[0]).trim();
     if (!key) continue;
-    // Drop trailing null/undefined cells so partial series don't render as zeros
     const cells = row.slice(1);
     let end = cells.length;
     while (end > 0 && (cells[end - 1] == null || cells[end - 1] === "")) end--;
     sparks[key] = cells.slice(0, end).map(Number);
   }
 
-  // ── Assemble KPI_DATA shape ───────────────────────────────────
-  const result = {};
+  // ── Assemble period objects ───────────────────────────────────────
+  const kpiData = {};
   for (const period of periods) {
     const d = {};
     for (const [field, byPeriod] of Object.entries(scalars)) {
       d[field] = byPeriod[period];
     }
-    d.sparks = sparks; // sparklines are period-agnostic in the template
-    result[period] = d;
+    d.sparks = sparks;
+    kpiData[period] = d;
   }
 
-  return result;
+  return { kpiData, fieldsMap };
+}
+
+/** Returns KPI data keyed by period: { MTD: {...}, QTD: {...}, … } */
+export async function readBoardKpiData() {
+  const { kpiData } = await parseWorkbook();
+  return kpiData;
+}
+
+/** Returns the field catalogue derived from the KPIs sheet: { fields: { key: { type } } } */
+export async function readKpiFields() {
+  const { fieldsMap } = await parseWorkbook();
+  return { fields: fieldsMap };
 }
