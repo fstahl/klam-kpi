@@ -267,6 +267,6 @@ The `Key` value maps to the `spark` property of a card in `kpi-config.json`.
 
 ## License
 
-Copyright (c) 2025 Fredrik Ståhl. Proprietary — restricted to internal use within the Addtech AB group. See [LICENSE](LICENSE) for terms.
+Copyright (c) 2026 Fredrik Ståhl. Proprietary — restricted to internal use within the Addtech AB group. See [LICENSE](LICENSE) for terms.
 
 The software is provided without warranty of any kind. The author accepts no liability for the accuracy of any figures displayed in the dashboard or for any decisions made on the basis of those figures.
