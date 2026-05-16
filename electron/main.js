@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, shell } from 'electron';
+import { app, BrowserWindow, Menu, shell, ipcMain } from 'electron';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import http from 'http';
@@ -38,7 +38,14 @@ function buildMenu(win) {
   const template = [
     ...(isMac
       ? [{ label: app.name, submenu: [
-          { role: 'about' },
+          {
+            label: `About ${app.name}`,
+            click: () => win.webContents.send('show-about', { version: app.getVersion() }),
+          },
+          {
+            label: 'View License',
+            click: () => shell.openPath(path.join(APP_DIR, 'LICENSE')),
+          },
           { type: 'separator' },
           { role: 'services' },
           { type: 'separator' },
@@ -48,7 +55,21 @@ function buildMenu(win) {
           { type: 'separator' },
           { role: 'quit' },
         ]}]
-      : [{ label: 'File', submenu: [{ role: 'quit' }] }]),
+      : [{
+          label: 'File',
+          submenu: [
+            {
+              label: `About ${app.name}`,
+              click: () => win.webContents.send('show-about', { version: app.getVersion() }),
+            },
+            {
+              label: 'View License',
+              click: () => shell.openPath(path.join(APP_DIR, 'LICENSE')),
+            },
+            { type: 'separator' },
+            { role: 'quit' },
+          ],
+        }]),
 
     {
       label: 'Data',
@@ -105,6 +126,7 @@ async function createWindow() {
     minHeight: 600,
     title: 'Kläm KPI',
     webPreferences: {
+      preload: path.join(__dirname, 'preload.cjs'),
       nodeIntegration: false,
       contextIsolation: true,
     },

@@ -113,6 +113,26 @@ body[data-theme="dark"] .theme-toggle__icon--moon { opacity: 0; transform: rotat
 .foot__legend-item { display: inline-flex; align-items: center; gap: 6px; }
 .foot__dot { width: 8px; height: 8px; border-radius: 50%; }
 
+/* Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px; }
+body[data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.65); }
+.modal { background: var(--bg-elev); border: 1px solid var(--rule-strong); border-radius: 12px; width: 100%; max-width: 420px; padding: 36px; position: relative; }
+.modal__close { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 9999px; background: transparent; border: 1px solid var(--rule); color: var(--fg-mute); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; transition: all 150ms; }
+.modal__close:hover { border-color: var(--rule-strong); color: var(--fg); }
+.modal__close svg { width: 14px; height: 14px; }
+
+/* About modal */
+.about__header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+.about__wordmark { font-family: var(--font-display); font-weight: 900; font-size: 28px; letter-spacing: -0.025em; color: var(--fg); line-height: 1; }
+.about__version { font-family: var(--font-body); font-size: 13px; color: var(--fg-faint); font-weight: 500; }
+.about__copy { font-family: var(--font-body); font-size: 14px; color: var(--fg-mute); line-height: 1.6; margin: 0 0 24px; }
+.about__rule { height: 1px; background: var(--rule); margin-bottom: 24px; }
+.about__meta { margin: 0 0 24px; display: flex; flex-direction: column; gap: 10px; }
+.about__meta-row { display: flex; gap: 0; }
+.about__meta-row dt { font-family: var(--font-body); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-faint); width: 96px; flex-shrink: 0; padding-top: 1px; }
+.about__meta-row dd { font-family: var(--font-body); font-size: 13px; color: var(--fg); margin: 0; line-height: 1.5; }
+.about__disclaimer { font-family: var(--font-body); font-size: 11px; color: var(--fg-faint); line-height: 1.6; margin: 0; padding-top: 20px; border-top: 1px solid var(--rule); }
+
 /* Print */
 @media print {
   @page { size: A3 landscape; margin: 12mm; }

@@ -9,6 +9,7 @@ import { KPICard } from './components/KPICard.jsx';
 import { Footer } from './components/Footer.jsx';
 import { AdminSection } from './admin/AdminSection.jsx';
 import { AdminBar } from './admin/AdminBar.jsx';
+import { AboutModal } from './components/AboutModal.jsx';
 import { monthName } from './utils/formatters.js';
 
 function ThemeToggle({ theme, onToggle }) {
@@ -64,6 +65,16 @@ export default function App({ kpiData, config: initialConfig, kpiFields }) {
   const [adminMode, setAdminMode] = useState(false);
   const [draft, setDraft] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [aboutVersion, setAboutVersion] = useState(null);
+
+  // Listen for the Electron menu "About" item
+  useEffect(() => {
+    if (!window.electronAPI) return;
+    const cleanup = window.electronAPI.onShowAbout(({ version }) => {
+      setAboutVersion(version ?? null);
+    });
+    return cleanup;
+  }, []);
 
   const [liveConfig, setLiveConfig] = useState(initialConfig);
   const activeConfig = adminMode ? draft : liveConfig;
@@ -255,6 +266,10 @@ export default function App({ kpiData, config: initialConfig, kpiFields }) {
 
       {adminMode && (
         <AdminBar onSave={saveAdmin} onDiscard={discardAdmin} onAddSection={addSection} saving={saving} />
+      )}
+
+      {aboutVersion !== null && (
+        <AboutModal version={aboutVersion} onClose={() => setAboutVersion(null)} />
       )}
     </div>
   );
