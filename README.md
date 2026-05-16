@@ -9,7 +9,7 @@ Originally built as an internal board report for POWER&D AB; now being generalis
 ## Overview
 
 ```
-  kpi-template.xlsx ──────────────────► Express (server.js)
+  data.xlsx ──────────────────► Express (server.js)
   (you own this — fill it however       │  /api/board-kpi
    you like: manually, Power Query,     │  /api/config
    your own script, …)                  ▼
@@ -34,7 +34,7 @@ npm run electron     # build + launch the desktop app
 
 ## Monthly workflow
 
-1. Update `kpi-template.xlsx` with the latest figures (manually, or via your own script).
+1. Update `data.xlsx` with the latest figures (manually, or via your own script).
 2. In the app: **Data → Reload Dashboard** (`⌘⇧R`) — the server re-reads the workbook immediately.
 3. **Data → Open Data Folder** (`⌘⇧O`) — opens the app directory in Finder if you need to swap files.
 
@@ -85,11 +85,11 @@ All dashboard layout and branding is stored in `kpi-config.json` in the project 
 
 | Property | Type | Description |
 |---|---|---|
-| `field` | string | Field key from `src/kpi-fields.json` |
+| `field` | string | Field key matching a row in the KPIs sheet of `data.xlsx` |
 | `label` | string | Display label |
 | `unit` | string | Unit suffix (kSEK, %, …) |
 | `tag` | string? | Small badge (e.g. "Consulting") |
-| `spark` | string? | Sparkline key from the API (rev, ebita_pct, bill, gp, adm) |
+| `spark` | string? | Sparkline key matching a row in the Sparklines sheet of `data.xlsx` |
 | `comparison` | string | `target` · `prev_month` · `prev_year` · `lastq` · `none` |
 | `invert` | bool? | Flip delta colour (lower is better, e.g. costs) |
 | `progress` | bool? | Show progress bar toward target |
@@ -127,10 +127,10 @@ In admin mode you can:
 ```
 Electron main process (electron/main.js)
 ├── imports server.js  →  Express on :3000
-│     ├── GET  /api/board-kpi      reads kpi-template.xlsx
+│     ├── GET  /api/board-kpi      reads data.xlsx
 │     ├── GET  /api/config         reads kpi-config.json
 │     ├── POST /api/config         writes kpi-config.json
-│     ├── GET  /api/kpi-fields     reads src/kpi-fields.json
+│     ├── GET  /api/kpi-fields     derived from KPIs sheet in data.xlsx
 │     ├── POST /api/upload-logo    saves to data/logos/
 │     ├── static /dist/            Vite build output
 │     ├── static /public/          fonts (/fonts/), default logos (/assets/)
@@ -158,14 +158,14 @@ Key source files:
 | File | Role |
 |---|---|
 | `server.js` | Express app — API routes + static serving |
-| `src/boardKpi.js` | Reads `kpi-template.xlsx`, derives field catalogue and KPI data |
+| `src/boardKpi.js` | Reads `data.xlsx`, derives field catalogue and KPI data |
 | `src/config.js` | PORT from `.env` (default 3000) |
 
 ---
 
 ## The Excel template
 
-`kpi-template.xlsx` is the single data source. You own it — fill it however suits your workflow: manually, via Power Query, a Python script, or anything else.
+`data.xlsx` is the single data source. You own it — fill it however suits your workflow: manually, via Power Query, a Python script, or anything else.
 
 ### Required sheets
 
@@ -247,7 +247,7 @@ The `Key` value maps to the `spark` property of a card in `kpi-config.json`.
 │   │   ├── admin/            # AdminBar, AdminSection, CardEditor, CardPicker
 │   │   ├── utils/            # formatters.js, comparison.js
 │   │   └── styles/           # tokens.css, dashboard.css, admin.css
-│   ├── boardKpi.js           # Reads kpi-template.xlsx; derives field catalogue + KPI data
+│   ├── boardKpi.js           # Reads data.xlsx; derives field catalogue + KPI data
 │   └── config.js             # PORT from .env (default 3000)
 ├── dist/                     # Vite build output (gitignored)
 ├── public/
@@ -260,7 +260,7 @@ The `Key` value maps to the `spark` property of a card in `kpi-config.json`.
 ├── server.js                 # Express server
 ├── vite.config.js            # Vite config (root: src/frontend, out: dist/)
 ├── kpi-config.json           # Dashboard layout + branding config
-└── kpi-template.xlsx         # Your data — KPIs sheet + Sparklines sheet
+└── data.xlsx         # Your data — KPIs sheet + Sparklines sheet
 ```
 
 ---

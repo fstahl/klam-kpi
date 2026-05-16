@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { read, utils } from "xlsx";
 
-const TEMPLATE_PATH = resolve(process.cwd(), "kpi-template.xlsx");
+const TEMPLATE_PATH = resolve(process.cwd(), "data.xlsx");
 
 // Parse the workbook and return both KPI data and the field catalogue.
 async function parseWorkbook() {

@@ -15,7 +15,7 @@ async function init() {
     document.getElementById('root').innerHTML =
       `<div style="font-family:sans-serif;padding:48px;color:#b91c1c">
         <strong>Could not load KPI data.</strong><br>
-        Make sure <code>kpi-template.xlsx</code> exists and the server is running.
+        Make sure <code>data.xlsx</code> exists and the server is running.
       </div>`;
     return;
   }

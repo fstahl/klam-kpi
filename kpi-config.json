@@ -1,138 +1,72 @@
 {
   "branding": {
-    "logoLight": "/data/logos/logo_1778842043795.png",
-    "logoDark": "/board-kpi/assets/logo-primary-white.png"
+    "logoLight": "/assets/logo-primary-colour.png",
+    "logoDark": "/assets/logo-primary-white.png"
   },
   "header": {
     "title": "Board KPI Report",
     "meta": "Monthly Board Update",
-    "source": "ERP, CRM, HRIS"
+    "source": "ERP, CRM"
   },
   "intro": {
     "tagline": "{month} at a glance.",
-    "description": "Ten board KPIs across commercial growth, operating efficiency, and people. Use the period selector to switch between month, quarter, and year to date."
+    "description": "Key performance indicators across financial results and commercial activity. Use the period selector to switch between month, quarter, and year to date."
   },
   "footer": "Confidential · Board materials",
   "sections": [
     {
-      "id": "commercial",
-      "label": "Commercial",
-      "hint": "New business & financial performance",
+      "id": "financial",
+      "label": "Financial",
+      "hint": "Revenue, margin and profitability",
       "cols": 3,
       "cards": [
-        {
-          "id": "cm",
-          "type": "pair",
-          "field": "cm_count",
-          "field2": "cm_value",
-          "delta_field": "cm_delta",
-          "label": "New business won",
-          "tag": "Controlled Motion",
-          "unit": "deals",
-          "unit2": "kSEK",
-          "comparison": "target"
-        },
-        {
-          "id": "pe",
-          "type": "pair",
-          "field": "pe_count",
-          "field2": "pe_value",
-          "delta_field": "pe_delta",
-          "label": "New business won",
-          "tag": "Power Electronics",
-          "unit": "deals",
-          "unit2": "kSEK",
-          "comparison": "target"
-        },
-        {
-          "id": "pwc",
-          "field": "pwc",
-          "label": "Profit / Working Capital",
-          "tag": "R/RK",
-          "unit": "%",
-          "comparison": "target",
-          "progress": true,
-          "target_field": "pwc_target",
-          "bar_mode": "ratio"
-        },
         {
           "id": "revenue",
           "field": "revenue",
           "label": "Revenue",
           "unit": "kSEK",
-          "spark": "rev",
-          "comparison": "target"
-        },
-        {
-          "id": "ebita",
-          "field": "ebita",
-          "label": "EBITa",
-          "unit": "kSEK",
-          "spark": "ebita_pct",
+          "spark": "revenue",
           "comparison": "target",
-          "note_field": "ebita_pct"
+          "delta_field": "revenue_delta"
         },
         {
-          "id": "rex",
-          "field": "rex",
-          "label": "REX (EBITa)",
+          "id": "gp_margin",
+          "field": "gp_margin",
+          "label": "GP Margin",
+          "unit": "%",
+          "spark": "gp_margin",
+          "comparison": "target",
+          "delta_field": "gp_margin_delta"
+        },
+        {
+          "id": "ebit",
+          "field": "ebit",
+          "label": "EBIT",
+          "unit": "kSEK",
+          "comparison": "target",
+          "delta_field": "ebit_delta"
+        }
+      ]
+    },
+    {
+      "id": "commercial",
+      "label": "Commercial",
+      "hint": "Customer acquisition and retention",
+      "cols": 2,
+      "cards": [
+        {
+          "id": "new_customers",
+          "field": "new_customers",
+          "label": "New Customers",
+          "unit": "deals",
+          "comparison": "none"
+        },
+        {
+          "id": "retention",
+          "field": "retention",
+          "label": "Customer Retention",
           "unit": "%",
           "comparison": "none"
-        }
-      ]
-    },
-    {
-      "id": "efficiency",
-      "label": "Efficiency",
-      "hint": "Operating efficiency & cost discipline",
-      "cols": 3,
-      "cards": [
-        {
-          "id": "billing",
-          "field": "billing",
-          "label": "Billing rate",
-          "tag": "Consulting",
-          "unit": "%",
-          "spark": "bill",
-          "comparison": "target",
-          "progress": true,
-          "target_field": "billing_target",
-          "bar_mode": "absolute"
-        },
-        {
-          "id": "gp_emp",
-          "field": "gp_emp",
-          "label": "GP per employee",
-          "unit": "kSEK",
-          "spark": "gp",
-          "comparison": "target"
-        },
-        {
-          "id": "admin",
-          "field": "admin",
-          "label": "Administration cost",
-          "unit": "kSEK",
-          "spark": "adm",
-          "comparison": "target",
-          "invert": true
-        }
-      ]
-    },
-    {
-      "id": "people",
-      "label": "People",
-      "hint": "Talent conversion",
-      "cols": 1,
-      "cards": [
-        {
-          "id": "converted",
-          "field": "converted",
-          "label": "Consultants converted",
-          "unit": "people",
-          "comparison": "none",
-          "progress": true,
-          "target_field": "converted_goal",
-          "bar_mode": "ratio"
         }
       ]
     }
