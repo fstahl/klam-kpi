@@ -1,36 +1,6 @@
 // License text is intentionally hardcoded here rather than read from the
 // LICENSE file at runtime, so that editing the file on disk has no effect
 // on what is shown to the user.
-const LICENSE_TEXT = `Copyright (c) 2026 Fredrik Ståhl
-
-PROPRIETARY SOFTWARE — RESTRICTED USE
-
-Permission is granted to companies within the Addtech AB group to use,
-install, and run this software for internal business purposes only.
-
-The following are NOT permitted without prior written consent from the
-copyright holder:
-
-  - Redistribution of the source code or compiled binaries outside the
-    Addtech AB group
-  - Sublicensing, selling, or offering the software as a service to
-    third parties
-  - Publishing the source code in any public repository or forum
-
-DISCLAIMER
-
-This software is provided "as is", without warranty of any kind, express
-or implied. The author makes no representations or guarantees regarding
-the accuracy, completeness, or timeliness of any data, calculations, or
-KPI figures produced or displayed by this software.
-
-In no event shall the author be liable for any claim, damages, or other
-liability — whether in contract, tort, or otherwise — arising from or in
-connection with the software or the use of information it displays,
-including but not limited to any business decisions made on the basis of
-figures shown in the dashboard.
-
-Use of this software constitutes acceptance of these terms.`;
 
 export function LicenseModal({ onClose }) {
   return (
@@ -44,7 +14,36 @@ export function LicenseModal({ onClose }) {
         </button>
 
         <h2 className="license__title">License</h2>
-        <pre className="license__text">{LICENSE_TEXT}</pre>
+
+        <div className="license__body">
+          <p className="license__copy">Copyright (c) 2026 Fredrik Ståhl</p>
+
+          <p className="license__heading">Proprietary Software — Restricted Use</p>
+          <p className="license__copy">
+            Permission is granted to companies within the Addtech AB group to use,
+            install, and run this software for internal business purposes only.
+          </p>
+          <p className="license__copy">The following are <strong>not</strong> permitted without prior written consent from the copyright holder:</p>
+          <ul className="license__list">
+            <li>Redistribution of the source code or compiled binaries outside the Addtech AB group</li>
+            <li>Sublicensing, selling, or offering the software as a service to third parties</li>
+            <li>Publishing the source code in any public repository or forum</li>
+          </ul>
+
+          <p className="license__heading">Disclaimer</p>
+          <p className="license__copy">
+            This software is provided "as is", without warranty of any kind, express or implied.
+            The author makes no representations or guarantees regarding the accuracy, completeness,
+            or timeliness of any data, calculations, or KPI figures produced or displayed by this software.
+          </p>
+          <p className="license__copy">
+            In no event shall the author be liable for any claim, damages, or other liability —
+            whether in contract, tort, or otherwise — arising from or in connection with the software
+            or the use of information it displays, including but not limited to any business decisions
+            made on the basis of figures shown in the dashboard.
+          </p>
+          <p className="license__copy">Use of this software constitutes acceptance of these terms.</p>
+        </div>
 
       </div>
     </div>
