@@ -133,6 +133,11 @@ body[data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.65); }
 .about__meta-row dd { font-family: var(--font-body); font-size: 13px; color: var(--fg); margin: 0; line-height: 1.5; }
 .about__disclaimer { font-family: var(--font-body); font-size: 11px; color: var(--fg-faint); line-height: 1.6; margin: 0; padding-top: 20px; border-top: 1px solid var(--rule); }
 
+/* License modal */
+.modal--license { max-width: 560px; }
+.license__title { font-family: var(--font-display); font-weight: 800; font-size: 20px; letter-spacing: -0.01em; color: var(--fg); margin: 0 0 20px; }
+.license__text { font-family: var(--font-body); font-size: 12px; line-height: 1.75; color: var(--fg-mute); white-space: pre-wrap; margin: 0; padding: 20px; background: var(--bg-shell); border: 1px solid var(--rule); border-radius: 6px; max-height: 420px; overflow-y: auto; }
+
 /* Print */
 @media print {
   @page { size: A3 landscape; margin: 12mm; }

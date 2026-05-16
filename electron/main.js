@@ -44,7 +44,7 @@ function buildMenu(win) {
           },
           {
             label: 'View License',
-            click: () => shell.openPath(path.join(APP_DIR, 'LICENSE')),
+            click: () => win.webContents.send('show-license'),
           },
           { type: 'separator' },
           { role: 'services' },
@@ -64,7 +64,7 @@ function buildMenu(win) {
             },
             {
               label: 'View License',
-              click: () => shell.openPath(path.join(APP_DIR, 'LICENSE')),
+              click: () => win.webContents.send('show-license'),
             },
             { type: 'separator' },
             { role: 'quit' },

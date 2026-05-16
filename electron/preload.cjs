@@ -7,7 +7,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onShowAbout(cb) {
     const handler = (_event, payload) => cb(payload);
     ipcRenderer.on('show-about', handler);
-    // Return a cleanup function so the React effect can remove the listener.
     return () => ipcRenderer.removeListener('show-about', handler);
+  },
+  /** Call cb() when the main process fires 'show-license'. */
+  onShowLicense(cb) {
+    const handler = () => cb();
+    ipcRenderer.on('show-license', handler);
+    return () => ipcRenderer.removeListener('show-license', handler);
   },
 });

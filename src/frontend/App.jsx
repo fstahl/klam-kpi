@@ -10,6 +10,7 @@ import { Footer } from './components/Footer.jsx';
 import { AdminSection } from './admin/AdminSection.jsx';
 import { AdminBar } from './admin/AdminBar.jsx';
 import { AboutModal } from './components/AboutModal.jsx';
+import { LicenseModal } from './components/LicenseModal.jsx';
 import { monthName } from './utils/formatters.js';
 
 function ThemeToggle({ theme, onToggle }) {
@@ -66,14 +67,14 @@ export default function App({ kpiData, config: initialConfig, kpiFields }) {
   const [draft, setDraft] = useState(null);
   const [saving, setSaving] = useState(false);
   const [aboutVersion, setAboutVersion] = useState(null);
+  const [showLicense, setShowLicense] = useState(false);
 
-  // Listen for the Electron menu "About" item
+  // Listen for Electron menu items
   useEffect(() => {
     if (!window.electronAPI) return;
-    const cleanup = window.electronAPI.onShowAbout(({ version }) => {
-      setAboutVersion(version ?? null);
-    });
-    return cleanup;
+    const cleanupAbout   = window.electronAPI.onShowAbout(({ version }) => setAboutVersion(version ?? null));
+    const cleanupLicense = window.electronAPI.onShowLicense(() => setShowLicense(true));
+    return () => { cleanupAbout(); cleanupLicense(); };
   }, []);
 
   const [liveConfig, setLiveConfig] = useState(initialConfig);
@@ -270,6 +271,10 @@ export default function App({ kpiData, config: initialConfig, kpiFields }) {
 
       {aboutVersion !== null && (
         <AboutModal version={aboutVersion} onClose={() => setAboutVersion(null)} />
+      )}
+
+      {showLicense && (
+        <LicenseModal onClose={() => setShowLicense(false)} />
       )}
     </div>
   );
