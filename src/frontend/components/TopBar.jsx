@@ -1,38 +1,12 @@
-export function TopBar({ config, theme, adminMode, onConfigChange }) {
-  const logoSrc = theme === 'dark' ? config.branding.logoDark : config.branding.logoLight;
-  const dateStr = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+import { KlamMark } from './KlamMark.jsx';
 
-  function handleLogoChange(e) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = async (ev) => {
-      const res = await fetch('/api/upload-logo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ data: ev.target.result, filename: file.name }),
-      });
-      if (res.ok) {
-        const { path } = await res.json();
-        const key = theme === 'dark' ? 'logoDark' : 'logoLight';
-        onConfigChange({ branding: { ...config.branding, [key]: path } });
-      }
-    };
-    reader.readAsDataURL(file);
-  }
+export function TopBar({ config, theme, adminMode, onConfigChange }) {
+  const dateStr = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
   return (
     <header className="topbar">
       <div className="topbar__brand">
-        {adminMode ? (
-          <label className="topbar__logo-wrap" title="Click to replace logo">
-            <img src={logoSrc} alt="Logo" className="topbar__logo" />
-            <div className="topbar__logo-overlay">Replace</div>
-            <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleLogoChange} />
-          </label>
-        ) : (
-          <img src={logoSrc} alt="Logo" className="topbar__logo" />
-        )}
+        <KlamMark />
         <div className="topbar__crumb">
           <span className="topbar__crumb--sep" />
           {adminMode ? (

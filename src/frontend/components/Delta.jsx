@@ -10,10 +10,9 @@ export function Delta({ value, suffix = '%', invert = false }) {
   return (
     <span className={`kpi__delta ${cls} tnum`}>
       {!isFlat && (
-        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor">
-          {good
-            ? <path d="M3 7.5L6 4.5L9 7.5" strokeLinecap="round" strokeLinejoin="round" />
-            : <path d="M3 4.5L6 7.5L9 4.5" strokeLinecap="round" strokeLinejoin="round" />}
+        // Filled arrow — up or down. Path is a chunky upward arrow; rotated 180° for down.
+        <svg viewBox="0 0 11 11" fill="currentColor" style={{ transform: good ? 'none' : 'rotate(180deg)' }}>
+          <path d="M5.5 2 L9 6.5 L6.5 6.5 L6.5 9.5 L4.5 9.5 L4.5 6.5 L2 6.5 Z" />
         </svg>
       )}
       {sign}{Math.abs(v).toFixed(1)}{suffix}

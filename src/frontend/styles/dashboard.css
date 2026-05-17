@@ -12,10 +12,14 @@ body { background: var(--bg-shell); color: var(--fg); }
 /* Top bar */
 .topbar { display: flex; align-items: center; justify-content: space-between; padding: 24px 0; border-bottom: 1px solid var(--rule); margin-bottom: 32px; }
 .topbar__brand { display: flex; align-items: center; gap: 16px; }
-.topbar__logo { height: 28px; width: auto; display: block; }
 .topbar__crumb { display: flex; align-items: baseline; gap: 14px; font-family: var(--font-body); font-size: 13px; color: var(--fg-mute); letter-spacing: 0.04em; }
 .topbar__crumb--sep { width: 1px; height: 14px; background: var(--rule-strong); align-self: center; }
 .topbar__title { font-family: var(--font-display); font-weight: 700; font-size: 18px; letter-spacing: -0.01em; color: var(--fg); }
+
+/* KlamMark brand identity */
+.klammark { display: flex; align-items: center; gap: 12px; }
+.klammark__name { font-family: var(--font-display); font-weight: 600; font-size: 18px; letter-spacing: -0.01em; color: var(--fg); line-height: 1; }
+.klammark__sub { color: var(--fg-mute); font-weight: 400; }
 .topbar__meta { font-family: var(--font-body); font-size: 13px; color: var(--fg-mute); text-align: right; line-height: 1.4; }
 .topbar__meta strong { color: var(--fg); font-weight: 600; display: block; font-size: 14px; }
 
@@ -48,12 +52,16 @@ body[data-theme="dark"] .theme-toggle__icon--moon { opacity: 0; transform: rotat
 .page-title__sub { font-family: var(--font-body); font-size: 15px; font-weight: 400; color: var(--fg-mute); max-width: 420px; line-height: 1.5; margin: 0; }
 
 /* Section */
-.section { margin-bottom: 48px; }
-.section__head { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 16px; margin-bottom: 24px; border-bottom: 1px solid var(--rule); gap: 16px; }
-.section__title { display: flex; align-items: baseline; gap: 16px; }
-.section__num { font-family: var(--font-mono); font-size: var(--type-code-size); font-weight: var(--type-code-weight); letter-spacing: var(--type-code-tracking); color: var(--fg-faint); text-transform: uppercase; }
-.section__name { font-family: var(--font-display); font-weight: var(--type-h2-weight); font-size: var(--type-h2-size); letter-spacing: var(--type-h2-tracking); color: var(--fg); }
-.section__hint { font-family: var(--font-body); font-size: 12px; color: var(--fg-faint); letter-spacing: 0.02em; }
+.section { margin-bottom: var(--space-18); }
+.section__head { display: flex; align-items: flex-end; padding-bottom: 20px; }
+.section__title { display: flex; align-items: flex-end; gap: 20px; }
+.section__num { font-family: var(--font-display); font-size: 132px; font-weight: 500; line-height: 0.82; letter-spacing: -0.07em; color: var(--accent); margin-left: -4px; font-variant-numeric: tabular-nums; }
+.section__title-text { display: flex; flex-direction: column; gap: 6px; padding-bottom: 14px; }
+.section__name { font-family: var(--font-display); font-weight: var(--type-h2-weight); font-size: var(--type-h2-size); letter-spacing: var(--type-h2-tracking); color: var(--fg); line-height: 1; }
+.section__hint { font-family: var(--font-body); font-size: 14px; color: var(--fg-mute); letter-spacing: -0.005em; }
+/* Accent stub rule under section header */
+.section__rule { position: relative; height: 1px; background: var(--rule); margin-bottom: 24px; }
+.section__rule-stub { position: absolute; left: 0; top: 0; height: 1px; width: 96px; background: var(--accent); }
 
 /* KPI grid */
 .kpi-grid { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: var(--radius-card); overflow: hidden; }
@@ -76,7 +84,7 @@ body[data-theme="dark"] .theme-toggle__icon--moon { opacity: 0; transform: rotat
 .kpi__delta--pos { color: var(--pos); background: color-mix(in srgb, var(--pos) 12%, transparent); }
 .kpi__delta--neg { color: var(--neg); background: color-mix(in srgb, var(--neg) 12%, transparent); }
 .kpi__delta--flat { color: var(--fg-mute); background: var(--accent-soft); }
-.kpi__delta svg { width: 12px; height: 12px; stroke-width: 2.5; }
+.kpi__delta svg { width: 11px; height: 11px; flex-shrink: 0; }
 .kpi__sub-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--fg-faint); display: inline-block; }
 .kpi__spark { height: 36px; width: 100%; display: block; }
 .kpi__spark-wrap { margin-top: 2px; border-top: 1px dashed var(--rule); padding-top: 12px; }

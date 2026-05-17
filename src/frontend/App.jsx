@@ -227,10 +227,13 @@ export default function App({ kpiData, config: initialConfig, kpiFields }) {
             <div className="section__head">
               <div className="section__title">
                 <span className="section__num">{String(si + 1).padStart(2, '0')}</span>
-                <span className="section__name">{section.label}</span>
+                <div className="section__title-text">
+                  <span className="section__name">{section.label}</span>
+                  {section.hint && <span className="section__hint">{section.hint}</span>}
+                </div>
               </div>
-              {section.hint && <span className="section__hint">{section.hint}</span>}
             </div>
+            <div className="section__rule"><div className="section__rule-stub" /></div>
             <div className={`kpi-grid kpi-grid--${section.cols ?? 3}`}>
               {section.cards.map(card => (
                 <KPICard key={card.id} card={card} data={data} allData={kpiData} kpiFields={kpiFields} />
