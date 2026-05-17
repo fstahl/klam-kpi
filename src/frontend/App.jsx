@@ -175,7 +175,7 @@ export default function App({ kpiData, config: initialConfig, kpiFields }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <input
                 className="editable"
-                style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 'clamp(40px,4.5vw,64px)', lineHeight: 1, letterSpacing: '-0.025em', color: 'var(--fg)' }}
+                style={{ fontFamily: 'var(--font-display)', fontWeight: 500, fontSize: 'clamp(56px,7vw,104px)', lineHeight: 0.95, letterSpacing: '-0.035em', color: 'var(--fg)' }}
                 value={activeConfig.intro.tagline}
                 onChange={e => patchDraft({ intro: { ...activeConfig.intro, tagline: e.target.value } })}
               />

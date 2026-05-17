@@ -1,31 +1,135 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,300;1,14..32,400&display=swap');
-
-/* Red Hat Display — served from public/fonts/ by Express */
-@font-face { font-family: 'Red Hat Display'; src: url('/fonts/RedHatDisplay-Light.ttf') format('truetype'); font-weight: 300; font-style: normal; }
-@font-face { font-family: 'Red Hat Display'; src: url('/fonts/RedHatDisplay-LightItalic.ttf') format('truetype'); font-weight: 300; font-style: italic; }
-@font-face { font-family: 'Red Hat Display'; src: url('/fonts/RedHatDisplay-Regular.ttf') format('truetype'); font-weight: 400; font-style: normal; }
-@font-face { font-family: 'Red Hat Display'; src: url('/fonts/RedHatDisplay-Italic.ttf') format('truetype'); font-weight: 400; font-style: italic; }
-@font-face { font-family: 'Red Hat Display'; src: url('/fonts/RedHatDisplay-Medium.ttf') format('truetype'); font-weight: 500; font-style: normal; }
-@font-face { font-family: 'Red Hat Display'; src: url('/fonts/RedHatDisplay-MediumItalic.ttf') format('truetype'); font-weight: 500; font-style: italic; }
-@font-face { font-family: 'Red Hat Display'; src: url('/fonts/RedHatDisplay-SemiBold.ttf') format('truetype'); font-weight: 600; font-style: normal; }
-@font-face { font-family: 'Red Hat Display'; src: url('/fonts/RedHatDisplay-SemiBoldItalic.ttf') format('truetype'); font-weight: 600; font-style: italic; }
-@font-face { font-family: 'Red Hat Display'; src: url('/fonts/RedHatDisplay-Bold.ttf') format('truetype'); font-weight: 700; font-style: normal; }
-@font-face { font-family: 'Red Hat Display'; src: url('/fonts/RedHatDisplay-BoldItalic.ttf') format('truetype'); font-weight: 700; font-style: italic; }
-@font-face { font-family: 'Red Hat Display'; src: url('/fonts/RedHatDisplay-ExtraBold.ttf') format('truetype'); font-weight: 800; font-style: normal; }
-@font-face { font-family: 'Red Hat Display'; src: url('/fonts/RedHatDisplay-ExtraBoldItalic.ttf') format('truetype'); font-weight: 800; font-style: italic; }
-@font-face { font-family: 'Red Hat Display'; src: url('/fonts/RedHatDisplay-Black.ttf') format('truetype'); font-weight: 900; font-style: normal; }
-@font-face { font-family: 'Red Hat Display'; src: url('/fonts/RedHatDisplay-BlackItalic.ttf') format('truetype'); font-weight: 900; font-style: italic; }
+/* Kläm KPI — Design Tokens
+   Pine palette + Space Grotesk type pair
+   Fonts are imported in main.jsx via @fontsource packages (offline-safe). */
 
 :root {
-  --font-display: 'Red Hat Display', 'Helvetica Neue', Arial, sans-serif;
-  --font-body:    'Inter', 'Helvetica Neue', Arial, sans-serif;
+  /* ── Typography ─────────────────────────────────────────── */
+  --font-display:  "Space Grotesk", "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-ui:       "Space Grotesk", "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono:     "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-body:     var(--font-ui); /* alias used throughout dashboard.css */
+
+  /* Type scale */
+  --type-hero-size:        108px;
+  --type-hero-weight:      500;
+  --type-hero-tracking:    -0.045em;
+  --type-hero-leading:     0.92;
+
+  --type-section-size:     132px;
+  --type-section-weight:   500;
+  --type-section-tracking: -0.07em;
+  --type-section-leading:  0.82;
+
+  --type-pagehero-size:    104px;
+  --type-pagehero-weight:  500;
+  --type-pagehero-tracking:-0.035em;
+  --type-pagehero-leading: 0.95;
+
+  --type-bignum-size:      76px;
+  --type-bignum-weight:    500;
+  --type-bignum-tracking:  -0.03em;
+
+  --type-h2-size:          36px;
+  --type-h2-weight:        600;
+  --type-h2-tracking:      -0.025em;
+
+  --type-body-size:        14px;
+  --type-body-leading:     1.55;
+
+  --type-label-size:       12px;
+  --type-label-weight:     500;
+  --type-label-tracking:   0.12em;
+
+  --type-code-size:        10px;
+  --type-code-weight:      500;
+  --type-code-tracking:    0.14em;
+
+  /* ── Spacing ────────────────────────────────────────────── */
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   18px;
+  --space-6:   24px;
+  --space-7:   28px;
+  --space-8:   32px;
+  --space-10:  40px;
+  --space-14:  56px;
+  --space-18:  72px;
+
+  /* ── Radii ──────────────────────────────────────────────── */
+  --radius-card:    4px;
+  --radius-stamp:   3px;
+  --radius-pill:    999px;
+  --radius-window:  14px;
+
+  /* ── Pine palette — light (default) ─────────────────────── */
+  --color-bg:           #F2F4F3;
+  --color-surface:      #FFFFFF;
+  --color-surface-alt:  #F5F7F6;
+  --color-ink:          #0A100E;
+  --color-ink-soft:     #535B57;
+  --color-ink-faint:    #98A09C;
+  --color-line:         rgba(10, 16, 14, 0.08);
+
+  --color-accent:       #134E4A;
+  --color-accent-soft:  #CFE4E1;
+  --color-accent-ink:   #FFFFFF;
+
+  --color-positive:       #15803D;
+  --color-positive-soft:  #DDEFE2;
+  --color-negative:       #B91C1C;
+
+  --color-page-outer:   #E4E5E7;
+
+  /* ── Backward-compat aliases (dashboard.css uses these names) ── */
+  --bg:          var(--color-bg);
+  --bg-elev:     var(--color-surface);
+  --bg-shell:    var(--color-bg);
+  --rule:        var(--color-line);
+  --rule-strong: rgba(10, 16, 14, 0.18);
+  --fg:          var(--color-ink);
+  --fg-mute:     var(--color-ink-soft);
+  --fg-faint:    var(--color-ink-faint);
+  --accent:      var(--color-accent);
+  --accent-soft: var(--color-accent-soft);
+  --pos:         var(--color-positive);
+  --neg:         var(--color-negative);
+  --warn:        #92400E;
+  --spark-fill:  rgba(19, 78, 74, 0.10);
+}
+
+/* ── Pine palette — dark ─────────────────────────────────── */
+[data-theme="dark"] {
+  --color-bg:           #0D1716;
+  --color-surface:      #1A2624;
+  --color-surface-alt:  #14201E;
+  --color-ink:          #F0FAF8;
+  --color-ink-soft:     #9CB0AB;
+  --color-ink-faint:    #5F7470;
+  --color-line:         rgba(240, 250, 248, 0.10);
+
+  --color-accent:       #0D9488;
+  --color-accent-soft:  rgba(13, 148, 136, 0.22);
+  --color-accent-ink:   #FFFFFF;
+
+  --color-positive:       #4ADE80;
+  --color-positive-soft:  rgba(74, 222, 128, 0.20);
+  --color-negative:       #F87171;
+
+  --color-page-outer:   #0D1716;
+
+  /* Backward-compat aliases — dark overrides */
+  --rule-strong: rgba(240, 250, 248, 0.18);
+  --warn:        #D97706;
+  --spark-fill:  rgba(13, 148, 136, 0.16);
 }
 
 body {
   font-family: var(--font-body);
-  font-size: 1rem;
+  font-size: var(--type-body-size);
   font-weight: 400;
-  line-height: 1.5;
+  line-height: var(--type-body-leading);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
