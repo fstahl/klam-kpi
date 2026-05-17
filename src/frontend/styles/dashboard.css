@@ -64,10 +64,10 @@ body { background: var(--bg-shell); color: var(--fg); }
 
 /* Section */
 .section { margin-bottom: var(--space-18); }
-.section__head { display: flex; align-items: flex-end; padding-bottom: 20px; }
-.section__title { display: flex; align-items: flex-end; gap: 20px; }
-.section__num { font-family: var(--font-display); font-size: 88px; font-weight: 500; line-height: 0.82; letter-spacing: -0.07em; color: var(--accent); margin-left: -4px; font-variant-numeric: tabular-nums; }
-.section__title-text { display: flex; flex-direction: column; gap: 6px; padding-bottom: 14px; }
+.section__head { display: flex; align-items: flex-start; padding-bottom: 20px; }
+.section__title { display: flex; align-items: flex-start; gap: 20px; }
+.section__num { font-family: var(--font-display); font-size: 80px; font-weight: 500; line-height: 1; letter-spacing: -0.07em; color: var(--accent); margin-left: -4px; font-variant-numeric: tabular-nums; }
+.section__title-text { display: flex; flex-direction: column; gap: 6px; }
 .section__name { font-family: var(--font-display); font-weight: var(--type-h2-weight); font-size: var(--type-h2-size); letter-spacing: var(--type-h2-tracking); color: var(--fg); line-height: 1; }
 .section__hint { font-family: var(--font-body); font-size: 14px; color: var(--fg-mute); letter-spacing: -0.005em; }
 /* Accent stub rule under section header */
