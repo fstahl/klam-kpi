@@ -20,14 +20,6 @@ export function HeroKpiCard({ card, data, allData, kpiFields = {} }) {
   return (
     <div className="hero-kpi">
 
-      {/* KlamMark watermark — large, faint, bottom-right */}
-      <svg className="hero-kpi__watermark" width="220" height="220" viewBox="0 0 34 34" fill="none" aria-hidden="true">
-        <path d="M6 6 L6 28"  stroke="var(--accent-ink)" strokeWidth="2.4" strokeLinecap="square"/>
-        <path d="M28 6 L28 28" stroke="var(--accent-ink)" strokeWidth="2.4" strokeLinecap="square"/>
-        <circle cx="13.5" cy="17" r="2.6" fill="var(--accent-ink)"/>
-        <circle cx="20.5" cy="17" r="2.6" fill="var(--accent-ink)"/>
-      </svg>
-
       {/* Left — label, number, delta, narrative */}
       <div className="hero-kpi__left">
         <div className="hero-kpi__label">{label}</div>
