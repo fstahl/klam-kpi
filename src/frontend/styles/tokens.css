@@ -93,8 +93,11 @@
   --fg-faint:    var(--color-ink-faint);
   --accent:      var(--color-accent);
   --accent-soft: var(--color-accent-soft);
+  --accent-ink:  var(--color-accent-ink);   /* text/icons placed ON a flooded accent bg */
   --pos:         var(--color-positive);
+  --pos-soft:    var(--color-positive-soft);
   --neg:         var(--color-negative);
+  --neg-soft:    rgba(185, 28, 28, 0.12);   /* light-mode negative pill bg */
   --warn:        #92400E;
   --spark-fill:  rgba(19, 78, 74, 0.10);
 }
@@ -121,6 +124,7 @@
 
   /* Backward-compat aliases — dark overrides */
   --rule-strong: rgba(240, 250, 248, 0.18);
+  --neg-soft:    rgba(248, 113, 113, 0.14);
   --warn:        #D97706;
   --spark-fill:  rgba(13, 148, 136, 0.16);
 }
