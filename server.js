@@ -8,7 +8,11 @@ import { readBoardKpiData, readKpiFields } from "./src/boardKpi.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const CONFIG_PATH = path.resolve(process.cwd(), "kpi-config.json");
+// DATA_DIR is set by electron/main.js before this module is imported so that
+// the same path logic works in both dev (project root) and packaged builds
+// (~/Documents/Kläm KPI/).
+const DATA_DIR = process.env.KLAMKPI_DATA_DIR || __dirname;
+const CONFIG_PATH = path.join(DATA_DIR, "kpi-config.json");
 
 const app = express();
 app.use(express.json({ limit: "20mb" }));
@@ -19,7 +23,8 @@ app.use("/board-kpi", (_req, res) => res.redirect("/"));
 // Vite build output first, then legacy public/ for fonts/assets
 app.use(express.static(path.join(__dirname, "dist")));
 app.use(express.static(path.join(__dirname, "public")));
-app.use("/data", express.static(path.join(__dirname, "data")));
+// Serve user-uploaded logos from the data directory (writable in both dev and packaged)
+app.use("/data", express.static(path.join(DATA_DIR, "data")));
 
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true, timestamp: new Date().toISOString() });
@@ -69,7 +74,7 @@ app.post("/api/upload-logo", async (req, res) => {
     if (!data || !filename) return res.status(400).json({ error: "Missing data or filename" });
     const ext = path.extname(filename) || ".png";
     const outName = `logo_${Date.now()}${ext}`;
-    const dir = path.join(__dirname, "data", "logos");
+    const dir = path.join(DATA_DIR, "data", "logos");
     await mkdir(dir, { recursive: true });
     const base64 = data.replace(/^data:image\/\w+;base64,/, "");
     await writeFile(path.join(dir, outName), Buffer.from(base64, "base64"));

@@ -2,7 +2,11 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { read, utils } from "xlsx";
 
-const TEMPLATE_PATH = resolve(process.cwd(), "data.xlsx");
+// DATA_DIR is set by electron/main.js before the server (and this module) is
+// imported. Falls back to process.cwd() when running outside Electron (e.g.
+// npm start, tests).
+const DATA_DIR = process.env.KLAMKPI_DATA_DIR || process.cwd();
+const TEMPLATE_PATH = resolve(DATA_DIR, "data.xlsx");
 
 // Parse the workbook and return both KPI data and the field catalogue.
 async function parseWorkbook() {

@@ -32,6 +32,42 @@ npm run electron     # build + launch the desktop app
 
 ---
 
+## Packaging a distributable
+
+```bash
+npm run package:mac  # → dist/  (macOS .dmg for the current machine architecture)
+npm run package:win  # → dist/  (Windows .exe installer via NSIS)
+npm run package      # → both (or current platform default)
+```
+
+`electron-builder` is used for packaging. The first time a packaged app launches it
+creates **`~/Documents/Kläm KPI/`** and copies the bundled `data.xlsx` and
+`kpi-config.json` defaults there. On subsequent launches the user's own files are
+used — they are never overwritten.
+
+**Data → Open Data Folder** (`⌘⇧O`) opens `~/Documents/Kläm KPI/` in Finder so
+the user can swap in a new `data.xlsx` without needing a terminal.
+
+### App icon
+
+Place a **1024×1024 `.icns`** file at `build/icon.icns` (macOS) and/or a
+**256×256 `.ico`** at `build/icon.ico` (Windows) before packaging — `electron-builder`
+will pick them up automatically. Without them the default Electron icon is used.
+
+### Code signing (macOS)
+
+Without a valid Apple Developer ID the app will be blocked by Gatekeeper. For
+internal distribution on known machines, recipients can bypass this once:
+
+```bash
+xattr -d com.apple.quarantine "/Applications/Kläm KPI.app"
+```
+
+For wider distribution, sign and notarise via Xcode / `electron-builder`'s
+`CSC_LINK` / `CSC_KEY_PASSWORD` environment variables.
+
+---
+
 ## Monthly workflow
 
 1. Update `data.xlsx` with the latest figures (manually, or via your own script).
@@ -97,6 +133,9 @@ All dashboard layout and branding is stored in `kpi-config.json` in the project 
 | `bar_mode` | string? | `ratio` (value÷target) or `absolute` (value as %) |
 | `type` | string? | `value` (default) or `pair` (two sub-values) |
 | `delta_field` | string? | Override for the pre-computed delta field (default: `{field}_delta`) |
+| `hero` | bool? | Render as a full-width accent-flooded hero card (one per section) |
+| `narrative` | string? | Short supporting text shown below the delta pill on a hero card |
+| `highlight` | bool? | Include in the highlights ribbon at the top of the dashboard |
 
 ---
 
@@ -217,6 +256,8 @@ The `Key` value maps to the `spark` property of a card in `kpi-config.json`.
 | `npm run electron` | Build frontend + launch Electron desktop app |
 | `npm run dev` | Vite HMR on :5173 + Express watch on :3000 (for rapid UI iteration) |
 | `npm start` | Express only (no Vite, no Electron) |
+| `npm run package:mac` | Build distributable macOS `.dmg` (via electron-builder) |
+| `npm run package:win` | Build distributable Windows `.exe` installer |
 
 ---
 
@@ -237,7 +278,11 @@ The `Key` value maps to the `spark` property of a card in `kpi-config.json`.
 ```
 .
 ├── electron/
-│   └── main.js               # Electron entry point; spawns Express in-process
+│   ├── main.js               # Electron entry point; spawns Express in-process
+│   └── preload.cjs           # contextBridge IPC surface (About / License menu items)
+├── build/
+│   ├── icon.icns             # macOS app icon (provide your own, 1024×1024)
+│   └── icon.ico              # Windows app icon (provide your own, 256×256)
 ├── src/
 │   ├── frontend/             # React app source (Vite)
 │   │   ├── index.html

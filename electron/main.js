@@ -1,16 +1,44 @@
 import { app, BrowserWindow, Menu, shell, ipcMain } from 'electron';
 import { fileURLToPath } from 'url';
+import { copyFile, mkdir, access } from 'node:fs/promises';
 import path from 'path';
 import http from 'http';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const APP_DIR = path.join(__dirname, '..');
 
 app.name = 'Kläm KPI';
 
-// Run Express server in-process. EADDRINUSE is handled inside server.js via
-// the server 'error' event — it logs a warning and continues. Any synchronous
-// module-level throw here (e.g. import resolution failure) is still fatal.
+// ── Data directory ─────────────────────────────────────────────────────────
+// In dev:       project root  (files already exist here)
+// In packaged:  ~/Documents/Kläm KPI/  (created on first launch)
+const DATA_DIR = app.isPackaged
+  ? path.join(app.getPath('documents'), 'Kläm KPI')
+  : path.join(__dirname, '..');
+
+// Expose to server.js and boardKpi.js before they are imported.
+process.env.KLAMKPI_DATA_DIR = DATA_DIR;
+
+// ── First-launch setup ────────────────────────────────────────────────────
+// Creates ~/Documents/Kläm KPI/ and copies the bundled defaults into it the
+// first time the packaged app runs. Existing files are never overwritten so
+// user data is always preserved.
+if (app.isPackaged) {
+  await mkdir(DATA_DIR, { recursive: true });
+
+  const bundled = process.resourcesPath; // Contents/Resources/
+  for (const file of ['data.xlsx', 'kpi-config.json']) {
+    const dst = path.join(DATA_DIR, file);
+    try {
+      await access(dst); // already exists — leave it alone
+    } catch {
+      await copyFile(path.join(bundled, file), dst);
+    }
+  }
+}
+
+// ── Express server ─────────────────────────────────────────────────────────
+// Run in-process. EADDRINUSE is handled inside server.js via the server
+// 'error' event. Any synchronous module-level throw here is still fatal.
 await import('../server.js');
 
 function waitForServer(port, timeout = 10_000) {
@@ -77,7 +105,7 @@ function buildMenu(win) {
         {
           label: 'Open Data Folder',
           accelerator: 'CmdOrCtrl+Shift+O',
-          click: () => shell.openPath(APP_DIR),
+          click: () => shell.openPath(DATA_DIR),
         },
         {
           label: 'Reload Dashboard',
