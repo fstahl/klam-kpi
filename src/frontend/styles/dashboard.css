@@ -43,8 +43,8 @@ body { background: var(--bg-shell); color: var(--fg); }
 .theme-toggle__icon { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
 .theme-toggle__icon--sun { opacity: 0; transform: rotate(90deg) scale(0.6); }
 .theme-toggle__icon--moon { opacity: 1; }
-body[data-theme="dark"] .theme-toggle__icon--sun { opacity: 1; transform: rotate(0deg) scale(1); }
-body[data-theme="dark"] .theme-toggle__icon--moon { opacity: 0; transform: rotate(-90deg) scale(0.6); }
+[data-theme="dark"] .theme-toggle__icon--sun { opacity: 1; transform: rotate(0deg) scale(1); }
+[data-theme="dark"] .theme-toggle__icon--moon { opacity: 0; transform: rotate(-90deg) scale(0.6); }
 
 /* Page title */
 .page-title { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 40px; gap: 32px; flex-wrap: wrap; }
@@ -107,7 +107,7 @@ body[data-theme="dark"] .theme-toggle__icon--moon { opacity: 0; transform: rotat
 
 /* Modal */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px; }
-body[data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.65); }
+[data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.65); }
 .modal { background: var(--bg-elev); border: 1px solid var(--rule-strong); border-radius: 12px; width: 100%; max-width: 420px; padding: 36px; position: relative; }
 .modal__close { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 9999px; background: transparent; border: 1px solid var(--rule); color: var(--fg-mute); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; transition: all 150ms; }
 .modal__close:hover { border-color: var(--rule-strong); color: var(--fg); }

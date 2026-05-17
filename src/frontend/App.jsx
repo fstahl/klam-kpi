@@ -83,7 +83,11 @@ export default function App({ kpiData, config: initialConfig, kpiFields }) {
   useEffect(() => { setLiveConfig(initialConfig); }, [initialConfig]);
 
   useEffect(() => {
-    document.body.setAttribute('data-theme', theme);
+    // Set on documentElement (html) so [data-theme="dark"] in tokens.css
+    // matches :root — avoids Chromium's var()-in-inherited-custom-property bug
+    // where var() chains defined at :root always resolve from :root even when
+    // the referenced variable is overridden on a descendant element.
+    document.documentElement.setAttribute('data-theme', theme);
     try { localStorage.setItem('kpi-theme', theme); } catch {}
   }, [theme]);
 
