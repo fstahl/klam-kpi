@@ -1,7 +1,7 @@
 // The dot is rendered as an absolutely-positioned HTML element rather than
 // an SVG circle, because preserveAspectRatio="none" would squash any SVG
 // circle into an ellipse when the card is wider than it is tall.
-export function Sparkline({ data, height = 36, stroke = 'currentColor', fill = 'var(--spark-fill)' }) {
+export function Sparkline({ data, height = 36, stroke = 'currentColor', fill = 'var(--spark-fill)', surface = 'var(--bg-elev)' }) {
   if (!data || data.length < 2) return null;
   const pad = 6, w = 300, h = height;
   const min = Math.min(...data), max = Math.max(...data);
@@ -32,7 +32,7 @@ export function Sparkline({ data, height = 36, stroke = 'currentColor', fill = '
           top: dotTop,
           background: stroke,
           // Ring: surface colour gap, then the stroke colour again
-          boxShadow: `0 0 0 2px var(--bg-elev), 0 0 0 3.5px ${stroke}`,
+          boxShadow: `0 0 0 2px ${surface}, 0 0 0 3.5px ${stroke}`,
         }}
       />
     </div>

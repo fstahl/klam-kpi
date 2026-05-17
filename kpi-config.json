@@ -27,7 +27,9 @@
           "unit": "kSEK",
           "spark": "revenue",
           "comparison": "target",
-          "delta_field": "revenue_delta"
+          "delta_field": "revenue_delta",
+          "hero": true,
+          "narrative": "Revenue is the headline. Growth has held above plan — every line in this report is downstream of it."
         },
         {
           "id": "gp_margin",

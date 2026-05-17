@@ -9,6 +9,7 @@ import { KPICard } from './components/KPICard.jsx';
 import { Footer } from './components/Footer.jsx';
 import { AdminSection } from './admin/AdminSection.jsx';
 import { AdminBar } from './admin/AdminBar.jsx';
+import { HeroKpiCard } from './components/HeroKpiCard.jsx';
 import { AboutModal } from './components/AboutModal.jsx';
 import { LicenseModal } from './components/LicenseModal.jsx';
 import { monthName } from './utils/formatters.js';
@@ -226,25 +227,41 @@ export default function App({ kpiData, config: initialConfig, kpiFields }) {
         </div>
 
         {/* VIEW MODE */}
-        {!adminMode && activeConfig?.sections?.map((section, si) => (
-          <section key={section.id} className="section">
-            <div className="section__head">
-              <div className="section__title">
-                <span className="section__num">{String(si + 1).padStart(2, '0')}</span>
-                <div className="section__title-text">
-                  <span className="section__name">{section.label}</span>
-                  {section.hint && <span className="section__hint">{section.hint}</span>}
+        {!adminMode && activeConfig?.sections?.map((section, si) => {
+          const heroCard  = section.cards.find(c => c.hero);
+          const gridCards = section.cards.filter(c => !c.hero);
+          return (
+            <section key={section.id} className="section">
+              <div className="section__head">
+                <div className="section__title">
+                  <span className="section__num">{String(si + 1).padStart(2, '0')}</span>
+                  <div className="section__title-text">
+                    <span className="section__name">{section.label}</span>
+                    {section.hint && <span className="section__hint">{section.hint}</span>}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="section__rule"><div className="section__rule-stub" /></div>
-            <div className={`kpi-grid kpi-grid--${section.cols ?? 3}`}>
-              {section.cards.map(card => (
-                <KPICard key={card.id} card={card} data={data} allData={kpiData} kpiFields={kpiFields} />
-              ))}
-            </div>
-          </section>
-        ))}
+              <div className="section__rule"><div className="section__rule-stub" /></div>
+
+              {heroCard && (
+                <HeroKpiCard
+                  card={heroCard}
+                  data={data}
+                  allData={kpiData}
+                  kpiFields={kpiFields}
+                />
+              )}
+
+              {gridCards.length > 0 && (
+                <div className={`kpi-grid kpi-grid--${section.cols ?? 3}`}>
+                  {gridCards.map(card => (
+                    <KPICard key={card.id} card={card} data={data} allData={kpiData} kpiFields={kpiFields} />
+                  ))}
+                </div>
+              )}
+            </section>
+          );
+        })}
 
         {/* ADMIN MODE */}
         {adminMode && (

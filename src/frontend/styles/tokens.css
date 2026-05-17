@@ -69,6 +69,11 @@
   --neg-soft:   rgba(185, 28, 28, 0.12);
   --warn:       #92400E;
   --spark-fill: rgba(19, 78, 74, 0.10);
+  /* Colours for content placed ON an accent-flooded surface */
+  --on-accent-soft:   rgba(255, 255, 255, 0.78);
+  --on-accent-faint:  rgba(255, 255, 255, 0.55);
+  --on-accent-fill:   rgba(255, 255, 255, 0.20);
+  --on-accent-border: rgba(255, 255, 255, 0.28);
 }
 
 /* ── Pine palette — dark ───────────────────────────────────── */
@@ -90,6 +95,7 @@
   --neg-soft:   rgba(248, 113, 113, 0.14);
   --warn:       #D97706;
   --spark-fill: rgba(13, 148, 136, 0.16);
+  /* on-accent unchanged in dark — Pine accent-ink is #FFFFFF in both modes */
 }
 
 body {
