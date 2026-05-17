@@ -18,7 +18,7 @@
       "id": "financial",
       "label": "Financial",
       "hint": "Revenue, margin and profitability",
-      "cols": 3,
+      "cols": 2,
       "cards": [
         {
           "id": "revenue",
@@ -29,6 +29,7 @@
           "comparison": "target",
           "delta_field": "revenue_delta",
           "hero": true,
+          "highlight": true,
           "narrative": "Revenue is the headline. Growth has held above plan — every line in this report is downstream of it."
         },
         {
@@ -38,7 +39,8 @@
           "unit": "%",
           "spark": "gp_margin",
           "comparison": "target",
-          "delta_field": "gp_margin_delta"
+          "delta_field": "gp_margin_delta",
+          "highlight": true
         },
         {
           "id": "ebit",
@@ -61,7 +63,8 @@
           "field": "new_customers",
           "label": "New Customers",
           "unit": "deals",
-          "comparison": "none"
+          "comparison": "none",
+          "highlight": true
         },
         {
           "id": "retention",

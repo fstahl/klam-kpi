@@ -12,6 +12,7 @@ import { AdminBar } from './admin/AdminBar.jsx';
 import { HeroKpiCard } from './components/HeroKpiCard.jsx';
 import { AboutModal } from './components/AboutModal.jsx';
 import { LicenseModal } from './components/LicenseModal.jsx';
+import { HighlightsRibbon } from './components/HighlightsRibbon.jsx';
 import { monthName } from './utils/formatters.js';
 
 function ThemeToggle({ theme, onToggle }) {
@@ -225,6 +226,16 @@ export default function App({ kpiData, config: initialConfig, kpiFields }) {
             <ThemeToggle theme={theme} onToggle={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} />
           </div>
         </div>
+
+        {/* HIGHLIGHTS RIBBON */}
+        {!adminMode && (
+          <HighlightsRibbon
+            config={activeConfig}
+            data={data}
+            allData={kpiData}
+            kpiFields={kpiFields}
+          />
+        )}
 
         {/* VIEW MODE */}
         {!adminMode && activeConfig?.sections?.map((section, si) => {
