@@ -1,9 +1,9 @@
 {
   "name": "klamkpi",
-  "productName": "Kläm KPI",
+  "productName": "Kl\u00e4m KPI",
   "version": "0.1.0",
   "description": "On-premise KPI dashboard for small companies.",
-  "author": "Fredrik Ståhl",
+  "author": "Fredrik St\u00e5hl",
   "main": "electron/main.js",
   "type": "module",
   "scripts": {
@@ -19,7 +19,7 @@
   },
   "build": {
     "appId": "com.klamkpi",
-    "productName": "Kläm KPI",
+    "productName": "Kl\u00e4m KPI",
     "asar": true,
     "files": [
       "dist/**",
@@ -45,12 +45,15 @@
       "target": "dmg"
     },
     "dmg": {
-      "title": "Kläm KPI"
+      "title": "Kl\u00e4m KPI"
     },
     "win": {
       "target": "nsis"
     },
-    "afterPack": "./afterPack.cjs"
+    "afterPack": "./afterPack.cjs",
+    "asarUnpack": [
+      "electron/preload.cjs"
+    ]
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

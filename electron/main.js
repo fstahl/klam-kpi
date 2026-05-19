@@ -154,7 +154,10 @@ async function createWindow() {
     minHeight: 600,
     title: 'Kläm KPI',
     webPreferences: {
-      preload: path.join(__dirname, 'preload.cjs'),
+      // In packaged builds, preload.cjs is unpacked from the ASAR into
+      // app.asar.unpacked/ — preload scripts must be on the real filesystem.
+      // The replace() is a no-op in dev mode where there is no ASAR.
+      preload: path.join(__dirname.replace('app.asar', 'app.asar.unpacked'), 'preload.cjs'),
       nodeIntegration: false,
       contextIsolation: true,
     },
